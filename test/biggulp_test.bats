@@ -94,4 +94,18 @@ load test_helper
   __biggulp_create_config
 
   [ -f "$BIGGULP_TASK_DIR/config.js" ]
+  [ "$(cat $BIGGULP_TASK_DIR/config.js)" == "module.exports = {};" ]
+}
+
+@test "__biggulp_create_task_dir creates the task directory" {
+  BIGGULP_TASK_DIR="$BATS_TMPDIR/test_tasks"
+  source "$ROOT/biggulp.sh"
+
+  if [ ! -d "$BIGGULP_TASK_DIR" ]; then
+    rm -rf "$BIGGULP_TASK_DIR"
+  fi
+
+  __biggulp_create_task_dir
+
+  [ -d "$BIGGULP_TASK_DIR" ]
 }
