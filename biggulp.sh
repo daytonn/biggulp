@@ -1,7 +1,7 @@
 LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -z "$BIGGULP_TASK_DIR" ]; then
-  BIGGULP_TASK_DIR="yes"
+if [ -z "$BIGGULP_SEPARATE_TASKS" ]; then
+  BIGGULP_SEPARATE_TASKS="yes"
 fi
 
 if [ -z "$BIGGULP_USE_DOUBLE_QUOTES" ]; then
@@ -16,9 +16,17 @@ if [ -z "$BIGGULP_CREATE_WATCH_FILE" ]; then
   BIGGULP_CREATE_WATCH_FILE="yes"
 fi
 
+if [ -z "$BIGGULP_ROOT" ]; then
+  BIGGULP_ROOT="$LIB"
+fi
+
+if [ -z "$BIGGULP_TASK_DIR" ]; then
+  BIGGULP_TASK_DIR="tasks"
+fi
+
 function __biggulp_install_gulp {
   npm install --save-dev gulp
-  if [ "$BIGGULP_TASK_DIR" == "yes" ]; then
+  if [ "$BIGGULP_SEPARATE_TASKS" == "yes" ]; then
     npm install --save-dev require-dir
   fi
 }
@@ -26,7 +34,7 @@ function __biggulp_install_gulp {
 function __biggulp_init {
   __biggulp_install_gulp
 
-  if [ "$BIGGULP_TASK_DIR" == "yes" ]; then
+  if [ "$BIGGULP_SEPARATE_TASKS" == "yes" ]; then
     __big_gulp_create_task_dir
   fi
 
@@ -43,21 +51,21 @@ function __biggulp_init {
 
 function __big_gulp_create_task_dir {
   if [ ! -d ./tasks ]; then
-    mkdir tasks
-    __file_created "tasks/"
+    mkdir -p "$BIGGULP_TASK_DIR"
+    __file_created "$BIGGULP_TASK_DIR/"
   fi
 }
 
 function __biggulp_create_gulpfile {
   local template="gulpfile.js.template"
-  if [ "$BIGGULP_TASK_DIR" == "yes" ]; then
+  if [ "$BIGGULP_SEPARATE_TASKS" == "yes" ]; then
     template="gulpfile.dir.js.template"
   fi
 
   if [ "$BIGGULP_USE_DOUBLE_QUOTES" == "yes" ]; then
     sed "s/'/\"/g" "$LIB/$template" > gulpfile.js
   else
-    cat "$LIB/$template" > gulpfile.js
+    cat "$BIGGULP_ROOT/$template" > gulpfile.js
   fi
 
   __file_created "gulpfile.js"
@@ -71,11 +79,12 @@ function __biggulp_create_config {
 
 function __biggulp_create_watchfile {
   if [ "$BIGGULP_USE_DOUBLE_QUOTES" == "yes" ]; then
-    sed "s/'/\"/g" "$LIB/watch.js.template" > tasks/watch.js
+    sed "s/'/\"/g" "$BIGGULP_ROOT/watch.js.template" > "$BIGGULP_TASK_DIR/watch.js"
+    __file_created "tasks/watch.js"
   else
-    cat "$LIB/watch.js.template" > tasks/watch.js
+    cat "$BIGGULP_ROOT/watch.js.template" >> "$BIGGULP_TASK_DIR/watch.js"
+    cat gulpfile.js
   fi
-  __file_created "tasks/watch.js"
 }
 
 function __file_created {
