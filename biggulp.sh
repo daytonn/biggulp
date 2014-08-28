@@ -40,7 +40,7 @@ function __biggulp_init {
 
   __biggulp_create_gulpfile
 
-  if [ "$BIGGULP_USE_CONFIG" == "yes" ]; then
+  if [ "$BIGGULP_USE_CONFIG" == "yes" ] && [ "$BIGGULP_SEPARATE_TASKS" == "yes" ]; then
     __biggulp_create_config
   fi
 
@@ -72,8 +72,8 @@ function __biggulp_create_gulpfile {
 }
 
 function __biggulp_create_config {
-  touch tasks/config.js
-  echo "module.exports = {};" > tasks/config.js
+  touch "$BIGGULP_TASK_DIR/config.js"
+  echo "module.exports = {};" > "$BIGGULP_TASK_DIR/config.js"
   __file_created "tasks/config.js"
 }
 
@@ -83,7 +83,6 @@ function __biggulp_create_watchfile {
     __file_created "tasks/watch.js"
   else
     cat "$BIGGULP_ROOT/watch.js.template" >> "$BIGGULP_TASK_DIR/watch.js"
-    cat gulpfile.js
   fi
 }
 

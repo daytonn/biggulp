@@ -87,3 +87,11 @@ load test_helper
 
   [ -n "$(cat "$BIGGULP_TASK_DIR/watch.js" | grep \')" ]
 }
+
+@test "__biggulp_create_config creates a config file in the tasks folder" {
+  BIGGULP_TASK_DIR="$BATS_TMPDIR"
+  source "$ROOT/biggulp.sh"
+  __biggulp_create_config
+
+  [ -f "$BIGGULP_TASK_DIR/config.js" ]
+}
