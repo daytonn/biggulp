@@ -89,3 +89,7 @@ function __biggulp_create_watchfile {
 function __file_created {
   echo "$(green 'created -> ') $1"
 }
+
+function bigg {
+  __biggulp_init
+}
