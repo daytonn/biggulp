@@ -35,9 +35,8 @@ function __biggulp_init {
   __biggulp_install_gulp
 
   if [ "$BIGGULP_SEPARATE_TASKS" == "yes" ]; then
-    __big_gulp_create_task_dir
+    __biggulp_create_task_dir
   fi
-
   __biggulp_create_gulpfile
 
   if [ "$BIGGULP_USE_CONFIG" == "yes" ] && [ "$BIGGULP_SEPARATE_TASKS" == "yes" ]; then
@@ -49,8 +48,8 @@ function __biggulp_init {
   fi
 }
 
-function __big_gulp_create_task_dir {
-  if [ ! -d ./tasks ]; then
+function __biggulp_create_task_dir {
+  if [ ! -d "$BIGGULP_TASK_DIR" ]; then
     mkdir -p "$BIGGULP_TASK_DIR"
     __file_created "$BIGGULP_TASK_DIR/"
   fi
